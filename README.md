@@ -17,7 +17,7 @@ npm install gulp-fecmd
 var fecmd = require('gulp-fecmd');
 
 gulp.task('scripts', function() {
-    var data =  gulp.src(config.scripts.src + scriptSuffix)
+    var data =  gulp.src('js/a.js')
                     .pipe(sourcemaps.init());
 
 
