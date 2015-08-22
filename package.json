@@ -1,0 +1,38 @@
+{
+  "name": "gulp-fecmd",
+  "version": "1.0.0",
+  "description": "fe commonJS for gulp",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "keywords": [
+    "fe",
+    "js",
+    "cmd",
+    "common",
+    "require",
+    "commonjs"
+  ],
+  "files": [
+    "index.js",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shalles/gulp-fecmd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shalles/gulp-fecmd/issues"
+  },
+  "author": {
+    "name": "shalles",
+    "email": "shalles@163.com",
+    "url": "http://shalles.github.io"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "gulp-util": "^3.0.6",
+    "through2": "^2.0.0"
+  }
+}
