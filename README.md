@@ -1,7 +1,7 @@
 #gulp-fecmd
 
 ###what's gulp-fecmd
-gulp-fecmd is a tool that will help FE coding js with CMD(Common Module Definition) free with not quote any third-party library in your program;
+gulp-fecmd is a tool that will help FE coding js with CMD(Common Module Definition) free without quote any third-party library in your program;
 
 ###install
 
@@ -51,9 +51,11 @@ gulp.task('scripts', function() {
 // file a.js
 
 var b = require('lib/b.js'); // '[./]lib/b[.js]'
+var tpl = require('tpl/xx.tpl'); //return a string
 // or
 // require('c.js');
 // require('d');
+
 
 /* do something */
 var console.log(b.c);
@@ -81,4 +83,21 @@ exports.c = 2;
 exports.cc = 23;
 //*/
 //
+```
+
+**template**
+
+require support template (*.tpl) like this file "xx.tpl"
+and export a string
+
+```html
+<div>
+    {{#list}}
+    <span>{{supportTemplate}}</span>
+    {{/list}}
+</div>
+```
+export
+```js
+"<div>\n    {{#list}}\n    <span>{{supportTemplate}}</span>\n    {{/list}}\n</div>"
 ```
