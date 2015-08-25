@@ -51,7 +51,7 @@ function gulpFECMD(opt) {
                 moduleList = [],
                 buildPath = file.cwd,
                 buildPathRelative = file.base.slice(buildPath.length),
-                filepath = path.join(buildPathRelative, file.sourceMap.file);
+                filepath = path.join(buildPathRelative, path.basename(file.history));
             
             // register Callback before & after require iterator searching 
             callback(buildPath);
