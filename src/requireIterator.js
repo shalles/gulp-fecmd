@@ -67,14 +67,16 @@ function requireIterator(buildPath, filepath, modules, moduleList) {
                 utils.log("dependence(处理依赖): ", p);
                 requireIterator(buildPath, p, modules, moduleList);
             }
-            
-            return 'require("' + p + '")';
+
+            return 'require("' + utils.convertWintoInux(p) + '")';
         });
     }
     
     //导出前的处理
     content = fireback(cbAfter, {cnt: content, fp: filepath}).cnt;
      
+    filepath = utils.convertWintoInux(filepath);
+    
     // 格式封装 导出tpl: code.tpl需要的数据
     var curID = utils.convertID(filepath);
     (modules[curID] > 1) || moduleList.push({ id: curID, path: filepath, code: content });

@@ -1,5 +1,6 @@
 var PLUGIN_NAME = 'gulp-fecmd',
-    regexID = /[^a-zA-Z0-9]/g;
+    regexID = /[^a-zA-Z0-9]/g,
+    flagWin = /\w:/.test(process.cwd());
 
 function log() {
     console.log('---- ' + PLUGIN_NAME + ' log ------------------------------------\n',
@@ -39,9 +40,14 @@ function convertID(path) {
     return path.replace(regexID, "");
 }
 
+function convertWintoInux(path){
+    return flagWin ? path.replace(/[\\]/g, "/") : path;
+}
 
 module.exports = {
     log: log,
     simpleTemplate: simpleTemplate,
-    convertID: convertID
+    convertID: convertID,
+    flagWin: flagWin,
+    convertWintoInux: convertWintoInux
 }
