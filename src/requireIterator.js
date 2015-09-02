@@ -13,18 +13,22 @@ function fireback(cb, args) {
 }
 
 function findInModulePackage(bpath, mpath, p) {
-    var rmfp = path.resolve(bpath, mpath, p);
-    rmfp = path.join(rmfp, 'bower.json')
+    var rmfp = path.resolve(bpath, mpath, p),
+        jsonpath = path.join(rmfp, 'bower.json')
         //fs.existsSync(rmfp);
 
     try {
-        readjson.sync(rmfp);
+        // 读取成功 p = require modle file path
+        p = readjson.sync(jsonpath).main;
     } catch (error) {
         console.log(error.message);
         return false;
     }
 
-    return p;
+    if(fs.existsSync(path.join(rmfp, p))){
+        return path.json(mpath, p);
+    }
+    return false;
 }
 
 function exportReqI(config) {
