@@ -36,6 +36,43 @@ function simpleTemplate(str, data) {
     return strRes;
 }
 
+function classof(o) {
+    // if (o === null) return "Null";
+    // if (o === undefined) return "Undefined";
+    return Object.prototype.toString.call(o).slice(8,-1);
+}
+
+function extend(){
+    
+    function copy(to, from, deep){
+        for(var i in from){
+            var fi = from[i];
+            if(deep && (!fi.nodeType || fi !== window)){
+                var classFI = classof(fi), 
+                    isArr = classFI === 'Array', 
+                    isObj = classFI === 'Object';
+                if(isArr || isObj){
+                    isArr && (to[i] = []);
+                    isObj && (to[i] = {});
+
+                    copy(to[i], from[i], deep);
+                }
+            }
+            if(from[i] !== undefined){
+                to[i] = from[i];
+            }
+        }
+    }
+
+    var re = {}, len = arguments.length, deep;
+    deep = arguments[len-1] === true ? (len--, true): false
+    for(var i = 0; i < len; i++){
+        classof(arguments[i]) === 'Object' && copy(re, arguments[i], deep);
+    }
+
+    return re;
+}
+
 function convertID(path) {
     return path.replace(regexID, "");
 }

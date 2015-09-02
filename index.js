@@ -42,7 +42,6 @@ function gulpFECMD(opt) {
                                     
     requireIterator = requireItor(opt);
 
-        
     var stream = through.obj(function (file, enc, cb) {
 
         if (file.isStream()) {
