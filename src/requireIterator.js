@@ -13,30 +13,43 @@ function fireback(cb, args) {
 }
 
 function findInModulePackage(bpath, mpath, p) {
+    //.bowerrc
+    //"directory": "src/scripts/modules"
+    console.log("\n+++++++========+++++++\n", bpath, 
+                "\n+++++++========+++++++\n", mpath, 
+                "\n+++++++========+++++++\n", p);
+    
     var rmfp = path.resolve(bpath, mpath, p),
         jsonpath = path.join(rmfp, 'bower.json')
         //fs.existsSync(rmfp);
-
+    console.log("\n+++++++====resolve====+++++++\n", rmfp);
     try {
         // 读取成功 p = require modle file path
         p = readjson.sync(jsonpath).main;
+        console.log("\n====bower.json====+++++++\n", p);
     } catch (error) {
         console.log(error.message);
         return false;
     }
 
     if(fs.existsSync(path.join(rmfp, p))){
-        return path.json(mpath, p);
+        return path.join(rmfp, p);
     }
     return false;
 }
 
 function exportReqI(config) {
-    var modulePath = config.modulePath;
+    var modulesPath = config.modulesPath;
 
     function requireIterator(buildPath, filepath, modules, moduleList) {
 
-        var content = fs.readFileSync(path.join(buildPath, filepath)),
+        console.log("\n+++++++========+++++++\n", buildPath, 
+                "\n+++++++========+++++++\n", filepath, 
+                "\n+++++++========+++++++\n", path.resolve(buildPath, filepath));
+
+        var readpath = path.isAbsolute(filepath) && fs.existsSync(filepath) ? 
+                                    filepath : path.join(buildPath, filepath),
+            content = fs.readFileSync(readpath),
             filebase = path.dirname(filepath),
             regx = /require\(['"](.+)['"]\)/g,
             match;
@@ -68,7 +81,7 @@ function exportReqI(config) {
             }
 
             content = content.replace(regx, function($0, $1) {
-                var p = path.isAbsolute($1) || path.join(filebase, $1),
+                var p = path.isAbsolute($1) ? $1 : path.join(filebase, $1),
                     id = utils.convertID(p);
 
                 // TODO: 触发
@@ -83,7 +96,7 @@ function exportReqI(config) {
                         p += '.js';
                     } else {
 
-                        p = findInModulePackage(p);
+                        p = findInModulePackage(buildPath, modulesPath, $1);
 
                         if (!p) {
                             // 模块库里面也没有

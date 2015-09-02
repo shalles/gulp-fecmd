@@ -34,7 +34,7 @@ function callback(){
 
 function gulpFECMD(opt) {
     var dft = {
-        modulesPath: "./bower_conponents"
+        modulesPath: "./bower_components"
     };
 
     opt = !opt ? (utils.log("use default config : ", dft), dft) :
@@ -57,6 +57,7 @@ function gulpFECMD(opt) {
                 buildPathRelative = file.base.slice(buildPath.length),
                 filepath = path.join(buildPathRelative, path.basename(file.history));
             
+            console.log("buildPathRelative", buildPathRelative);
             // register Callback before & after require iterator searching 
             callback(buildPath);
             
