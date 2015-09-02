@@ -3,8 +3,8 @@ var fs = require('fs'),
     utils = require('./src/utils'),
     gutil = require('gulp-util'),
     through = require('through2'),
-    requireIterator = require('./src/requireIterator');
-    
+    requireItor = require('./src/requireIterator');
+
 var PLUGIN_NAME = 'gulp-fecmd',
     PluginError = gutil.PluginError,
     codeStart = fs.readFileSync(__dirname + '/src/tpl/start.tpl').toString(),
@@ -14,16 +14,16 @@ var PLUGIN_NAME = 'gulp-fecmd',
 
 function callback(){
     // 清空 clear callback
-    requireIterator.cbBefore.empty();
-    requireIterator.cbAfter.empty();
+    requireItor.cbBefore.empty();
+    requireItor.cbAfter.empty();
     
     //格式缩进 format require code tab
-    requireIterator.cbAfter.add(function(args){
+    requireItor.cbAfter.add(function(args){
         args.cnt = args.cnt.replace(/\n/g, '\n\t\t\t');
         return;
     });
     // 处理不同ext文件 template require like require('htmlcode.tpl') export a safe string;
-    requireIterator.cbBefore.add(function(args){
+    requireItor.cbBefore.add(function(args){
         switch(path.extname(args.fp)){
             case '.tpl': 
                 args.cnt = "module.exports=" + JSON.stringify(args.cnt);
@@ -33,10 +33,15 @@ function callback(){
 }
 
 function gulpFECMD(opt) {
-    var dft = {};
-    if (!opt) {
-        utils.log("use default config : ", dft);
-    }
+    var dft = {
+        modulesPath: "./bower_conponents"
+    };
+
+    opt = !opt ? (utils.log("use default config : ", dft), dft) :
+                                    utils.extend(dft, opt, true);
+                                    
+    requireIterator = requireItor(opt);
+
         
     var stream = through.obj(function (file, enc, cb) {
 
