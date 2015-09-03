@@ -27,6 +27,12 @@ function callback(){
         switch(path.extname(args.fp)){
             case '.tpl': 
                 args.cnt = "module.exports=" + JSON.stringify(args.cnt);
+                break;
+            case '.json':
+                args.cnt = "module.exports=" + args.cnt; //解析出错直接暴露
+                break;
+            default:
+                break;
         }
         return;
     })

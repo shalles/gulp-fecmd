@@ -11,8 +11,6 @@ function fireback(cb, args) {
     return args;
 }
 
-
-
 // 配置文件只需获取一次
 function getModuleFilesPath(bpath, mpath){
     if(!getModuleFilesPath.path){
@@ -62,10 +60,6 @@ function exportReqI(config) {
     var modulesPath = config.modulesPath;
 
     function requireIterator(buildPath, filepath, modules, moduleList) {
-
-        // console.log("\n+++++++========+++++++\n", buildPath, 
-        //         "\n+++++++========+++++++\n", filepath, 
-        //         "\n+++++++========+++++++\n", path.resolve(buildPath, filepath));
 
         var readpath = path.isAbsolute(filepath) && fs.existsSync(filepath) ? 
                                     filepath : path.join(buildPath, filepath),
