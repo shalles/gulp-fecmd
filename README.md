@@ -9,6 +9,10 @@ gulp-fecmd is a tool that will help FE coding js with CMD(Common Module Definiti
 npm install gulp-fecmd
 ```
 
+**`version`** 1.0.6
+add support bower module, and more please look down "gulpfile.js" and "a.js"
+
+
 ###Documentation
 
 ```js
@@ -23,7 +27,14 @@ gulp.task('scripts', function() {
 
 
     // you should use it before minify or uglify and ...
-    data = data.pipe(fecmd());
+    // support bower module like 
+    // fecmd({
+    //      modulePath: "bower directory"
+    // })
+    // if you don't give modulePath, default is the directory in ".bowerrc" file 
+    // or the folder bower_components in you build path but all the first is you 
+    // scripts folder then bower module
+    data = data.pipe(fecmd()); 
     
 
 
@@ -55,6 +66,12 @@ var tpl = require('tpl/xx.tpl'); //return a string
 // or
 // require('c.js');
 // require('d');
+// 
+// if your version is 1.0.6 or newer you can quote module 
+// from bower module lick this require('jquery'), without 
+// extname and without a filename jquery or jquery.js file
+// in the same dir with a.js
+// require('jquery');
 
 
 /* do something */
@@ -85,6 +102,7 @@ exports.cc = 23;
 //
 ```
 
+
 **template**
 
 require support template (*.tpl) like this file "xx.tpl"
@@ -101,3 +119,6 @@ export
 ```js
 "<div>\n    {{#list}}\n    <span>{{supportTemplate}}</span>\n    {{/list}}\n</div>"
 ```
+
+
+
