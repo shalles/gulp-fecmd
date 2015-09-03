@@ -63,6 +63,7 @@ gulp.task('scripts', function() {
 
 var b = require('lib/b.js'); // '[./]lib/b[.js]'
 var tpl = require('tpl/xx.tpl'); //return a string
+var json = require('data/data.json'); //return the Object
 // or
 // require('c.js');
 // require('d');
@@ -71,7 +72,7 @@ var tpl = require('tpl/xx.tpl'); //return a string
 // from bower module lick this require('jquery'), without 
 // extname and without a filename jquery or jquery.js file
 // in the same dir with a.js
-// require('jquery');
+require('jquery');
 
 
 /* do something */
