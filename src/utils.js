@@ -1,3 +1,6 @@
+var fs = require('fs'),
+    path = require('path');
+
 var PLUGIN_NAME = 'gulp-fecmd',
     regexID = /[^a-zA-Z0-9]/g,
     flagWin = /\w:/.test(process.cwd());
@@ -118,11 +121,22 @@ function extend(){
     return re;
 }
 
+function readjson(filepath){
+    var json;
+    try{
+        json = JSON.parse(fs.readFileSync(filepath).toString());
+    } catch(e){
+        json = {}
+    }
+    return json;
+}
+
 module.exports = {
     log: log,
     simpleTemplate: simpleTemplate,
     convertID: convertID,
     flagWin: flagWin,
     convertWintoInux: convertWintoInux,
-    extend: extend
+    extend: extend,
+    readjson: readjson
 }

@@ -34,7 +34,7 @@ function callback(){
 
 function gulpFECMD(opt) {
     var dft = {
-        modulesPath: "./bower_components"
+        modulesPath: ""
     };
 
     opt = !opt ? (utils.log("use default config : ", dft), dft) :

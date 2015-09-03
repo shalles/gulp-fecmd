@@ -1,7 +1,6 @@
 var path = require('path'),
     fs = require('fs'),
     utils = require('./utils.js'),
-    readjson = require('readjson'),
     Callbacks = require('./lib/callback.js');
 
 var cbBefore = new Callbacks(),
@@ -12,26 +11,47 @@ function fireback(cb, args) {
     return args;
 }
 
+
+
+// 配置文件只需获取一次
+function getModuleFilesPath(bpath, mpath){
+    if(!getModuleFilesPath.path){
+        var bowerrc = path.join(bpath, '.bowerrc');
+
+        utils.log("检查\nbuild path: " + bpath, "配置文件.bowerrc: " + bowerrc);
+
+        if(!mpath && fs.existsSync(bowerrc)){
+                
+            if(mpath = utils.readjson(bowerrc).directory){
+                utils.log("检查配置bowerrc.directory: ", mpath);
+            }else {
+                mpath = "./bower_components";
+                utils.log("检查默认bower.directory: ", mpath);
+            }
+        }
+        getModuleFilesPath.path = path.resolve(bpath, mpath);
+    }
+
+    return getModuleFilesPath.path;
+}
 function findInModulePackage(bpath, mpath, p) {
     //.bowerrc
     //"directory": "src/scripts/modules"
-    console.log("\n+++++++========+++++++\n", bpath, 
-                "\n+++++++========+++++++\n", mpath, 
-                "\n+++++++========+++++++\n", p);
-    
-    var rmfp = path.resolve(bpath, mpath, p),
-        jsonpath = path.join(rmfp, 'bower.json')
-        //fs.existsSync(rmfp);
-    console.log("\n+++++++====resolve====+++++++\n", rmfp);
+    mpath = (mpath && fs.existsSync(path.resolve(bpath, mpath, p))) ? 
+                            mpath : getModuleFilesPath(bpath, mpath);
+
+    var rmfp = path.resolve(mpath, p),
+        jsonpath = path.join(rmfp, 'bower.json'); // 模块中的bower.json
+
     try {
         // 读取成功 p = require modle file path
-        p = readjson.sync(jsonpath).main;
-        console.log("\n====bower.json====+++++++\n", p);
+        utils.log("检查bower directory中是否存在以下模块", p);
+        p = utils.readjson(jsonpath).main;
+        utils.log("找到模块主文件", p);
     } catch (error) {
         console.log(error.message);
         return false;
     }
-
     if(fs.existsSync(path.join(rmfp, p))){
         return path.join(rmfp, p);
     }
@@ -43,9 +63,9 @@ function exportReqI(config) {
 
     function requireIterator(buildPath, filepath, modules, moduleList) {
 
-        console.log("\n+++++++========+++++++\n", buildPath, 
-                "\n+++++++========+++++++\n", filepath, 
-                "\n+++++++========+++++++\n", path.resolve(buildPath, filepath));
+        // console.log("\n+++++++========+++++++\n", buildPath, 
+        //         "\n+++++++========+++++++\n", filepath, 
+        //         "\n+++++++========+++++++\n", path.resolve(buildPath, filepath));
 
         var readpath = path.isAbsolute(filepath) && fs.existsSync(filepath) ? 
                                     filepath : path.join(buildPath, filepath),
