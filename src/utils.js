@@ -131,6 +131,14 @@ function readjson(filepath){
     return json;
 }
 
+function removeBuildPath(p, bp){
+    if(p.indexOf(bp) === 0){
+        p = p.slice(bp.length);
+    }
+    return p;
+}
+
+
 module.exports = {
     log: log,
     simpleTemplate: simpleTemplate,
@@ -138,5 +146,6 @@ module.exports = {
     flagWin: flagWin,
     convertWintoInux: convertWintoInux,
     extend: extend,
-    readjson: readjson
+    readjson: readjson,
+    removeBuildPath: removeBuildPath
 }

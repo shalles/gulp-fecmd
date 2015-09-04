@@ -51,6 +51,7 @@ function findInModulePackage(bpath, mpath, p) {
         return false;
     }
     if(fs.existsSync(path.join(rmfp, p))){
+        // TODO: 返回相对路径 相对build path
         return path.join(rmfp, p);
     }
     return false;
@@ -126,8 +127,10 @@ function exportReqI(config) {
                     utils.log("dependence(处理依赖): ", p);
                     requireIterator(buildPath, p, modules, moduleList);
                 }
-
-                return 'require("' + utils.convertWintoInux(p) + '")';
+                
+                p = utils.removeBuildPath(p, buildPath);
+                p = utils.convertWintoInux(p);
+                return 'require("' + p + '")';
             });
         }
 
@@ -137,6 +140,7 @@ function exportReqI(config) {
             fp: filepath
         }).cnt;
 
+        filepath = utils.removeBuildPath(filepath, buildPath);
         filepath = utils.convertWintoInux(filepath);
 
         // 格式封装 导出tpl: code.tpl需要的数据

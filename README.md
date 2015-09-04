@@ -10,8 +10,12 @@ npm install gulp-fecmd
 ```
 
 **`version`** 1.0.6
+
 add support bower module, and more please look down "gulpfile.js" and "a.js"
 
+**`version`** 1.0.7
+
+support .json
 
 ###Documentation
 
