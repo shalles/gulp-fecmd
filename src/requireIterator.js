@@ -18,14 +18,11 @@ function getModuleFilesPath(bpath, mpath){
 
         utils.log("检查\nbuild path: " + bpath, "配置文件.bowerrc: " + bowerrc);
 
-        if(!mpath && fs.existsSync(bowerrc)){
-                
-            if(mpath = utils.readjson(bowerrc).directory){
-                utils.log("检查配置bowerrc.directory: ", mpath);
-            }else {
-                mpath = "./bower_components";
-                utils.log("检查默认bower.directory: ", mpath);
-            }
+        if(!mpath && fs.existsSync(bowerrc) && (mpath = utils.readjson(bowerrc).directory)){
+            utils.log("检查配置bowerrc.directory: ", mpath);
+        }else {
+            mpath = "./bower_components";
+            utils.log("检查默认bower.directory: ", mpath);
         }
         getModuleFilesPath.path = path.resolve(bpath, mpath);
     }
