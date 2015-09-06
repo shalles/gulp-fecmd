@@ -1,7 +1,6 @@
 var fs = require('fs'),
     path = require('path'),
-    babel = require('babel-core'),
-    traceur = require('traceur');
+    babel = require('babel-core');
 
 /*
  * callback(parmas)

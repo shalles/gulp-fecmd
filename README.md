@@ -21,6 +21,8 @@ support .json
 
 support .es6
 
+more infomation [ https://babeljs.io/docs/learn-es2015/ ](https://babeljs.io/docs/learn-es2015/)
+
 ### Documentation
 
 ```js
