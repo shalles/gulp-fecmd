@@ -13,32 +13,6 @@ var PLUGIN_NAME = 'gulp-fecmd',
     codeInit = fs.readFileSync(__dirname + '/src/tpl/init.tpl').toString(),
     codeEnd = fs.readFileSync(__dirname + '/src/tpl/end.tpl').toString();
 
-function callback(){
-    // 清空 clear callback
-    requireItor.cbBefore.empty();
-    requireItor.cbAfter.empty();
-    
-    //格式缩进 format require code tab
-    requireItor.cbAfter.add(function(args){
-        args.cnt = args.cnt.replace(/\n/g, '\n\t\t\t');
-        return;
-    });
-    // 处理不同ext文件 template require like require('htmlcode.tpl') export a safe string;
-    requireItor.cbBefore.add(function(args){
-        switch(path.extname(args.fp)){
-            case '.tpl': 
-                args.cnt = "module.exports=" + JSON.stringify(args.cnt);
-                break;
-            case '.json':
-                args.cnt = "module.exports=" + args.cnt; //解析出错直接暴露
-                break;
-            default:
-                break;
-        }
-        return;
-    })
-}
-
 function gulpFECMD(opt) {
     var dft = {
         modulesPath: ""
