@@ -97,7 +97,8 @@ function exportReqI(config) {
                     id = utils.convertID(p);
 
                 // TODO: 触发
-                var wp = path.join(buildPath, p);
+                //var wp = path.join(buildPath, p);
+                var wp = p.indexOf(buildPath) === 0 ? p : path.join(buildPath, p);
                 if (!fs.existsSync(wp)) {
                     /*
                     utils.log("error: 找不到文件", p);
