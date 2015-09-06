@@ -49,7 +49,8 @@ function gulpFECMD(opt) {
             contents = utils.simpleTemplate(codetpl, moduleList);
 
             // 合并文件 merge temolate
-            var main = utils.simpleTemplate(codeInit, utils.removeBuildPath(filepath, buildPath));
+            var main = utils.simpleTemplate(codeInit, utils.convertWintoInux(utils.removeBuildPath(filepath, buildPath)));
+            
             contents = codeStart + contents + main + codeEnd;
             
             file.contents = new Buffer(contents);
