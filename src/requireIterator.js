@@ -68,7 +68,7 @@ function exportReqI(config) {
 
         content = content.toString();
 
-        // 处理检查require前的工作
+        // 处理检查require前的工作 为扩展语言如coffee等
         content = fireback(cbBefore, {
             cnt: content,
             fp: filepath
