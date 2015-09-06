@@ -19,8 +19,7 @@ support .json
 
 **`version`** 1.0.8
 
-support .es6
-
+support .es6 
 more infomation [ https://babeljs.io/docs/learn-es2015/ ](https://babeljs.io/docs/learn-es2015/)
 
 ### Documentation
