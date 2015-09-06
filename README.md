@@ -1,9 +1,9 @@
-#gulp-fecmd
+# gulp-fecmd
 
-###what's gulp-fecmd
+### what's gulp-fecmd
 gulp-fecmd is a tool that will help FE coding js with CMD(Common Module Definition) free without quote any third-party library in your program;
 
-###install
+### install
 
 ```
 npm install gulp-fecmd
@@ -17,7 +17,11 @@ add support bower module, and more please look down "gulpfile.js" and "a.js"
 
 support .json
 
-###Documentation
+**`version`** 1.0.8
+
+support .es6
+
+### Documentation
 
 ```js
 //gulpfile.js
@@ -68,6 +72,7 @@ gulp.task('scripts', function() {
 var b = require('lib/b.js'); // '[./]lib/b[.js]'
 var tpl = require('tpl/xx.tpl'); //return a string
 var json = require('data/data.json'); //return the Object
+var es6 = require('lib/file.es6'); // return es5 code
 // or
 // require('c.js');
 // require('d');
@@ -105,6 +110,26 @@ exports.c = 2;
 exports.cc = 23;
 //*/
 //
+```
+**es6**
+
+```js
+// file.es6
+
+class Calc {
+    constructor() {
+        console.log('Calc constructor');
+    }
+    add(a, b) {
+        return a + b;
+    }
+}
+
+module.exports = Calc;
+
+// usage
+// var c = new Calc();
+// console.log(c.add(1, 2));
 ```
 
 

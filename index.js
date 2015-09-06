@@ -3,7 +3,8 @@ var fs = require('fs'),
     utils = require('./src/utils'),
     gutil = require('gulp-util'),
     through = require('through2'),
-    requireItor = require('./src/requireIterator');
+    requireItor = require('./src/requireIterator'),
+    plugin = require('./src/plugin');
 
 var PLUGIN_NAME = 'gulp-fecmd',
     PluginError = gutil.PluginError,
@@ -65,7 +66,7 @@ function gulpFECMD(opt) {
             
             console.log("buildPathRelative", buildPathRelative);
             // register Callback before & after require iterator searching 
-            callback(buildPath);
+            plugin(requireItor.cbBefore, requireItor.cbAfter, buildPath);
             
             // 深度优先遍历处理require  Depth-First searching require
             moduleList = requireIterator(buildPath, filepath, modules, moduleList);
