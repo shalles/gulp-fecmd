@@ -54,11 +54,10 @@ function classof(o) {
 }
 
 function extend(){
-    
     function copy(to, from, deep){
         for(var i in from){
             var fi = from[i];
-            if(deep && (!fi.nodeType || fi !== window)){
+            if(deep && fi && !fi.nodeType && fi !== fi[i]){
                 var classFI = classof(fi), 
                     isArr = classFI === 'Array', 
                     isObj = classFI === 'Object';
@@ -66,7 +65,20 @@ function extend(){
                     isArr && (to[i] = []);
                     isObj && (to[i] = {});
 
-                    copy(to[i], from[i], deep);
+                    iterator.stack.push(fi);
+                    log("iterator", iterator.count);
+
+                    if(iterator.count++ < 10){
+                        copy(to[i], fi, deep);
+                    } else {
+                        log("there Object or Array deep more than" + iterator.count);
+                        console.log("copy statck is ", iterator.stack);
+                    }
+                }else{
+                    iterator = {
+                        count: 1,
+                        stack: []
+                    };
                 }
             }
             if(from[i] !== undefined){
@@ -74,10 +86,14 @@ function extend(){
             }
         }
     }
-
-    var re = {}, len = arguments.length, deep;
-    deep = arguments[len-1] === true ? (len--, true): false
-    for(var i = 0; i < len; i++){
+    var iterator = {
+        count: 1,
+        stack: []
+    };
+    var re, len = arguments.length, deep, i;
+    deep = arguments[len-1] === true ? (len--, true): false;
+    arguments[0] === true ? (i = 2, re = arguments[1]): (i = 0, re = {});
+    for(i; i < len; i++){
         classof(arguments[i]) === 'Object' && copy(re, arguments[i], deep);
     }
 
