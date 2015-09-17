@@ -30,8 +30,7 @@ function getModuleFilesPath(bpath, mpath){
     return getModuleFilesPath.path;
 }
 function findInModulePackage(bpath, mpath, p) {
-    //.bowerrc
-    //"directory": "src/scripts/modules"
+
     mpath = (mpath && fs.existsSync(path.resolve(bpath, mpath, p))) ? 
                             mpath : getModuleFilesPath(bpath, mpath);
 
@@ -49,13 +48,15 @@ function findInModulePackage(bpath, mpath, p) {
     }
     if(fs.existsSync(path.join(rmfp, p))){
         // TODO: 返回相对路径 相对build path
+        
         return path.join(rmfp, p);
     }
     return false;
 }
 
 function exportReqI(config) {
-    var modulesPath = config.modulesPath;
+    var modulesPath = config.modulesPath,
+        commonModuleList = []; 
 
     function requireIterator(buildPath, filepath, modules, moduleList) {
 
@@ -75,62 +76,40 @@ function exportReqI(config) {
         }).cnt;
 
         // 当前文件中是否有require项 这里只是简单的regex match 之后需优化排除注释里的require
-        match = content.match(regx);
+        content = content.replace(regx, function($0, $1) {
+            var p = path.isAbsolute($1) ? $1 : path.join(filebase, $1);
+            // TODO: 触发
+            //var wp = path.join(buildPath, p);
+            var wp = p.indexOf(buildPath) === 0 ? p : path.join(buildPath, p);
+            if (!fs.existsSync(wp)) {
+                // 默认ext是.js
+                if (fs.existsSync(wp + '.js')) {
+                    p += '.js';
+                } else {
 
-        // 没有require不需要迭代
-        if (match) {
-            var i, matchLen = match.length;
-            //检查所有require都缓存了
-            for (i = 0; i < matchLen; i++) {
-                // 检查到没有缓存的就跳出执行后面的缓存
-                if (!modules[utils.convertID(regx.exec(match[i])[1])]) {
-                    break;
-                }
-                // 所有require依赖都已缓存
-                if (i === matchLen) {
-                    return;
-                }
-            }
+                    p = modules[$1] || findInModulePackage(buildPath, modulesPath, $1);
 
-            content = content.replace(regx, function($0, $1) {
-                var p = path.isAbsolute($1) ? $1 : path.join(filebase, $1),
-                    id = utils.convertID(p);
-
-                // TODO: 触发
-                //var wp = path.join(buildPath, p);
-                var wp = p.indexOf(buildPath) === 0 ? p : path.join(buildPath, p);
-                if (!fs.existsSync(wp)) {
-                    /*
-                    utils.log("error: 找不到文件", p);
-                    return;
-                    /*/
-                    // 默认ext是.js
-                    if (fs.existsSync(wp + '.js')) {
-                        p += '.js';
-                    } else {
-
-                        p = findInModulePackage(buildPath, modulesPath, $1);
-
-                        if (!p) {
-                            // 模块库里面也没有
-                            throw Error("error: can not find file(找不到文件) " + wp);
-                        }
+                    if (!p) {
+                        // 模块库里面也没有
+                        throw Error("error: can not find file(找不到文件) " + wp);
+                    }else{
+                        modules[$1] = p;
                     }
-                    //*/
                 }
-
-                if (!modules[id]) {
-                    // 处理循环引用
-                    modules[id] = 1;
-                    utils.log("dependence(处理依赖): ", p);
-                    requireIterator(buildPath, p, modules, moduleList);
-                }
-                
-                p = utils.removeBuildPath(p, buildPath);
-                p = utils.convertWintoInux(p);
-                return 'require("' + p + '")';
-            });
-        }
+                //*/
+            }
+            var id = utils.convertID(p);
+            if (!modules[id]) {
+                // 处理循环引用
+                modules[id] = 1;
+                utils.log("dependence(处理依赖): ", p);
+                requireIterator(buildPath, p, modules, moduleList);
+            }
+            
+            p = utils.removeBuildPath(p, buildPath);
+            p = utils.convertWintoInux(p);
+            return 'require("' + p + '")';
+        });
 
         //导出前的处理
         content = fireback(cbAfter, {
