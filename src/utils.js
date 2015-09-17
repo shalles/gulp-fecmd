@@ -122,12 +122,26 @@ function toBasePath(p, bp){
     return convertWintoInux(removeBuildPath(p, bp));
 }
 
+function singleArray(arr, id){
+    var obj = {}
+    for(var i in arr){
+        var aio = arr[i];
+        obj[aio[id]] = aio;
+    }
+    arr = [];
+    for(var j in obj){
+        arr.push(obj[j]);
+    }
+    return arr;
+}
+
 module.exports = {
     log: log,
     simpleTemplate: simpleTemplate,
     convertID: convertID,
     flagWin: flagWin,
     toBasePath: toBasePath,
+    singleArray: singleArray,
     convertWintoInux: convertWintoInux,
     extend: extend,
     readjson: readjson,

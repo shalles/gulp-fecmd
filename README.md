@@ -9,18 +9,46 @@ gulp-fecmd is a tool that will help FE coding js with CMD(Common Module Definiti
 npm install gulp-fecmd
 ```
 
+### new version
+
+**`version`** 1.1.0 <br>
+support common file
+
+if there are some files are common in your project, you can separate them from page file,
+and just add "!!" at end of module path like such
+
+```js
+require('jquery!!');
+require('./lib/comm.js!!');
+require('./lib/comm.tpl!!');
+require('./lib/comm.json!!');
+require('./lib/comm.es6!!');
+// more ...
+```
+and the common.js file will export with your gulp.dist
+
+so you could add a new file source in you page file
+
+```html
+    <!-- add common.js before app.js -->
+    <script src="../js/common.js"></script>
+    <script src="../js/app-1.js"></script>
+```
+
+**`version`** 1.0.8 <br>
+support .es6 
+more infomation [ https://babeljs.io/docs/learn-es2015/ ](https://babeljs.io/docs/learn-es2015/)
+
+
+**`version`** 1.0.7 <br>
+support .json
+
+
 **`version`** 1.0.6
 
 add support bower module, and more please look down "gulpfile.js" and "a.js"
 
-**`version`** 1.0.7
 
-support .json
-
-**`version`** 1.0.8
-
-support .es6 
-more infomation [ https://babeljs.io/docs/learn-es2015/ ](https://babeljs.io/docs/learn-es2015/)
 
 ### Documentation
 
@@ -133,7 +161,6 @@ module.exports = Calc;
 // console.log(c.add(1, 2));
 ```
 
-
 **template**
 
 require support template (*.tpl) like this file "xx.tpl"
@@ -151,5 +178,14 @@ export
 "<div>\n    {{#list}}\n    <span>{{supportTemplate}}</span>\n    {{/list}}\n</div>"
 ```
 
+## test demo 
+
+[ https://www.npmjs.com/package/fepro ](https://www.npmjs.com/package/fepro)
+
+$ sudo npm install -g fepro
+$ fepro -b gulp "your_demo_path"
+$ cd "your_demo_path"
+$ fepro -i gulp
+$ gulp
 
 

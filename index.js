@@ -68,15 +68,16 @@ function gulpFECMD(opt) {
         // console.log("this:----------------------------\n", this);
 
         if(commonModulesList.length){
-            var commM = {}
-            for(var i in commonModulesList){
-                var cm = commonModulesList[i];
-                commM[cm.id] = cm;
-            }
-            commonModulesList = [];
-            for(var j in commM){
-                commonModulesList.push(commM[j]);
-            }
+            // var commM = {}
+            // for(var i in commonModulesList){
+            //     var cm = commonModulesList[i];
+            //     commM[cm.id] = cm;
+            // }
+            // commonModulesList = [];
+            // for(var j in commM){
+            //     commonModulesList.push(commM[j]);
+            // }
+            commonModulesList = utils.singleArray(commonModulesList, 'id');
             contents = utils.simpleTemplate(codetpl, commonModulesList);
 
             contents = utils.simpleTemplate(basetpl, {
