@@ -56,9 +56,9 @@ function findInModulePackage(bpath, mpath, p) {
 
 function exportReqI(config) {
     var modulesPath = config.modulesPath,
-        commonModuleList = []; 
+        commonPath = config.commPath; 
 
-    function requireIterator(buildPath, filepath, modules, moduleList) {
+    function requireIterator(buildPath, filepath, modules, moduleListObj) {
 
         var readpath = path.isAbsolute(filepath) && fs.existsSync(filepath) ? 
                                     filepath : path.join(buildPath, filepath),
@@ -69,6 +69,13 @@ function exportReqI(config) {
 
         content = content.toString();
 
+        var requireList = (content.replace(/\/\/.*\n/g, '\n').match(regx) || []).map(function(x){
+            x = x && regx.exec(x) || [];
+
+            console.log("x------------------: ", x, x[1]);
+            return x[1] || '';
+        });
+
         // 处理检查require前的工作 为扩展语言如coffee等
         content = fireback(cbBefore, {
             cnt: content,
@@ -77,7 +84,16 @@ function exportReqI(config) {
 
         // 当前文件中是否有require项 这里只是简单的regex match 之后需优化排除注释里的require
         content = content.replace(regx, function($0, $1) {
-            var p = path.isAbsolute($1) ? $1 : path.join(filebase, $1);
+            // 排除注释掉的require
+            //if(requireList.indexOf($1) === -1) return $0;
+
+            // 处理common
+            var p, flag = $1.slice(-2) === '!!' ? 2 : 1;
+            $1 = p = flag === 2 ? $1.slice(0, -2): $1;
+
+            console.log("flag:------------", $1, "----", flag);
+            // 处理绝对路径的情况
+            p = path.isAbsolute(p) ? p : path.join(filebase, p);
             // TODO: 触发
             //var wp = path.join(buildPath, p);
             var wp = p.indexOf(buildPath) === 0 ? p : path.join(buildPath, p);
@@ -88,7 +104,7 @@ function exportReqI(config) {
                 } else {
 
                     p = modules[$1] || findInModulePackage(buildPath, modulesPath, $1);
-
+                    p = utils.toBasePath(p, buildPath)
                     if (!p) {
                         // 模块库里面也没有
                         throw Error("error: can not find file(找不到文件) " + wp);
@@ -102,13 +118,13 @@ function exportReqI(config) {
 
             if (!modules[id]) {
                 // 处理循环引用
-                modules[id] = 1;
+                modules[id] = flag;
                 utils.log("dependence(处理依赖): ", p);
-                requireIterator(buildPath, p, modules, moduleList);
+                requireIterator(buildPath, p, modules, moduleListObj);
             }
             
             p = utils.toBasePath(p, buildPath);
-            
+
             return 'require("' + p + '")';
         });
 
@@ -122,14 +138,29 @@ function exportReqI(config) {
 
         // 格式封装 导出tpl: code.tpl需要的数据
         var curID = utils.convertID(filepath);
-        (modules[curID] === 2) || moduleList.push({
-            id: curID,
-            path: filepath,
-            code: content
-        });
-        modules[curID] = 2;
+        if(modules[curID] !== 8){
+            console.log("modules[]----------", modules);
+            var tgt = 'gen'
+            switch(modules[curID]){
+                case 1: 
+                    tgt = 'gen';
+                    break;
+                case 2:
+                    tgt = 'comm';
+                    break;
+                default: 
+                    break;
+            }
+            moduleListObj[tgt].push({
+                id: curID,
+                path: filepath,
+                code: content
+            });
+        }
+            
+        modules[curID] = 8;
 
-        return moduleList;
+        return moduleListObj;
     }
 
     return requireIterator;
