@@ -1,17 +1,13 @@
 var fs = require('fs'),
     path = require('path'),
     utils = require('./src/utils'),
-    gutil = require('gulp-util'),
     through = require('through2'),
     requireItor = require('./src/requireIterator'),
     plugin = require('./src/plugin');
 
 var PLUGIN_NAME = 'gulp-fecmd',
-    PluginError = gutil.PluginError,
-    codeStart = fs.readFileSync(__dirname + '/src/tpl/start.tpl').toString(),
     codetpl = fs.readFileSync(__dirname + '/src/tpl/code.tpl').toString(),
-    codeInit = fs.readFileSync(__dirname + '/src/tpl/init.tpl').toString(),
-    codeEnd = fs.readFileSync(__dirname + '/src/tpl/end.tpl').toString();
+    basetpl = fs.readFileSync(__dirname + '/src/tpl/base.tpl').toString();
 
 function gulpFECMD(opt) {
     var dft = {
@@ -49,9 +45,12 @@ function gulpFECMD(opt) {
             contents = utils.simpleTemplate(codetpl, moduleList);
 
             // 合并文件 merge temolate
-            var main = utils.simpleTemplate(codeInit, utils.convertWintoInux(utils.removeBuildPath(filepath, buildPath)));
+            var mainpath = utils.convertWintoInux(utils.removeBuildPath(filepath, buildPath));
             
-            contents = codeStart + contents + main + codeEnd;
+            contents = utils.simpleTemplate(basetpl, {
+                "modules": contents,
+                "path": mainpath
+            });
             
             file.contents = new Buffer(contents);
         }

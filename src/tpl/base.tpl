@@ -15,3 +15,10 @@
         }
         return module.exports;
     }
+    
+    {{ modules }}
+
+    // 主文件执行
+    require("{{path}}");
+
+})(this);
