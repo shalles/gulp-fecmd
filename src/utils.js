@@ -117,12 +117,17 @@ function removeBuildPath(p, bp){
     return p;
 }
 
+function toBasePath(p, bp){
+    
+    return convertWintoInux(removeBuildPath(p, bp));
+}
 
 module.exports = {
     log: log,
     simpleTemplate: simpleTemplate,
     convertID: convertID,
     flagWin: flagWin,
+    toBasePath: toBasePath,
     convertWintoInux: convertWintoInux,
     extend: extend,
     readjson: readjson,

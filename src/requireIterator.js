@@ -96,9 +96,10 @@ function exportReqI(config) {
                         modules[$1] = p;
                     }
                 }
-                //*/
             }
+
             var id = utils.convertID(p);
+
             if (!modules[id]) {
                 // 处理循环引用
                 modules[id] = 1;
@@ -106,8 +107,8 @@ function exportReqI(config) {
                 requireIterator(buildPath, p, modules, moduleList);
             }
             
-            p = utils.removeBuildPath(p, buildPath);
-            p = utils.convertWintoInux(p);
+            p = utils.toBasePath(p, buildPath);
+            
             return 'require("' + p + '")';
         });
 
@@ -117,12 +118,11 @@ function exportReqI(config) {
             fp: filepath
         }).cnt;
 
-        filepath = utils.removeBuildPath(filepath, buildPath);
-        filepath = utils.convertWintoInux(filepath);
+        filepath = utils.toBasePath(filepath, buildPath);
 
         // 格式封装 导出tpl: code.tpl需要的数据
         var curID = utils.convertID(filepath);
-        (modules[curID] > 1) || moduleList.push({
+        (modules[curID] === 2) || moduleList.push({
             id: curID,
             path: filepath,
             code: content
