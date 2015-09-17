@@ -41,7 +41,7 @@ function gulpFECMD(opt) {
             buildPathRelative = file.base.slice(buildPath.length),
             filepath = path.join(buildPathRelative, path.basename(file.history));
             
-            console.log("buildPathRelative", buildPathRelative);
+            // console.log("buildPathRelative", buildPathRelative);
             // register Callback before & after require iterator searching 
             plugin(requireItor.cbBefore, requireItor.cbAfter, buildPath);
             
@@ -63,20 +63,9 @@ function gulpFECMD(opt) {
             file.contents = new Buffer(contents);
         }
         
-        // console.log("file:----------------------------\n", file);
         this.push(file);
-        // console.log("this:----------------------------\n", this);
 
         if(commonModulesList.length){
-            // var commM = {}
-            // for(var i in commonModulesList){
-            //     var cm = commonModulesList[i];
-            //     commM[cm.id] = cm;
-            // }
-            // commonModulesList = [];
-            // for(var j in commM){
-            //     commonModulesList.push(commM[j]);
-            // }
             commonModulesList = utils.singleArray(commonModulesList, 'id');
             contents = utils.simpleTemplate(codetpl, commonModulesList);
 
@@ -98,7 +87,7 @@ function gulpFECMD(opt) {
         cb();
     });
     
-    console.log("stream:----------------------------\n", stream);
+    // console.log("stream:----------------------------\n", stream);
 
     return stream;
 };

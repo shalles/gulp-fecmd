@@ -69,12 +69,12 @@ function exportReqI(config) {
 
         content = content.toString();
 
-        var requireList = (content.replace(/\/\/.*\n/g, '\n').match(regx) || []).map(function(x){
-            x = x && regx.exec(x) || [];
+        // var requireList = (content.replace(/\/\/.*\n/g, '\n').match(regx) || []).map(function(x){
+        //     x = x && regx.exec(x) || [];
 
-            console.log("x------------------: ", x, x[1]);
-            return x[1] || '';
-        });
+        //     console.log("x------------------: ", x, x[1]);
+        //     return x[1] || '';
+        // });
 
         // 处理检查require前的工作 为扩展语言如coffee等
         content = fireback(cbBefore, {
@@ -91,7 +91,7 @@ function exportReqI(config) {
             var p, flag = $1.slice(-2) === '!!' ? 2 : 1;
             $1 = p = flag === 2 ? $1.slice(0, -2): $1;
 
-            console.log("flag:------------", $1, "----", flag);
+            // console.log("flag:------------", $1, "----", flag);
             // 处理绝对路径的情况
             p = path.isAbsolute(p) ? p : path.join(filebase, p);
             // TODO: 触发
@@ -139,7 +139,7 @@ function exportReqI(config) {
         // 格式封装 导出tpl: code.tpl需要的数据
         var curID = utils.convertID(filepath);
         if(modules[curID] !== 8){
-            console.log("modules[]----------", modules);
+            // console.log("modules[]----------", modules);
             var tgt = 'gen'
             switch(modules[curID]){
                 case 1: 
