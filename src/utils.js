@@ -1,13 +1,16 @@
 var fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    gutil = require('gulp-util');
 
 var PLUGIN_NAME = 'gulp-fecmd',
     regexID = /[^a-zA-Z0-9]/g,
     flagWin = /\w:/.test(process.cwd());
 
 function log() {
-    console.log('---- ' + PLUGIN_NAME + ' log ------------------------------------\n',
-                                        Array.prototype.join.call(arguments, "\n"));
+    //console.log('---- ' + PLUGIN_NAME + ' log ------------------------------------\n',
+                                        // Array.prototype.join.call(arguments, "\n"));
+    // console.log(gutil.colors.yellow);
+    gutil.log(gutil.colors.yellow(arguments[0]), Array.prototype.slice.call(arguments, 1).join("\n"));
 }
 
 function simpleTemplate(str, data) {

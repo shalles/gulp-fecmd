@@ -1,5 +1,6 @@
 var path = require('path'),
     fs = require('fs'),
+    gutil = require('gulp-util'), 
     utils = require('./utils.js'),
     Callbacks = require('./lib/callback.js');
 
@@ -16,13 +17,13 @@ function getModuleFilesPath(bpath, mpath){
     if(!getModuleFilesPath.path){
         var bowerrc = path.join(bpath, '.bowerrc');
 
-        utils.log("检查\nbuild path: " + bpath, "配置文件.bowerrc: " + bowerrc);
+        utils.log("检查配置文件(check).bowerrc: ", bowerrc);
 
         if(!mpath && fs.existsSync(bowerrc) && (mpath = utils.readjson(bowerrc).directory)){
-            utils.log("检查配置bowerrc.directory: ", mpath);
+            utils.log("检查配置项(check)bowerrc.directory: ", mpath);
         }else {
             mpath = "./bower_components";
-            utils.log("检查默认bower.directory: ", mpath);
+            utils.log("检查默认(check)bower_compontents: ", mpath);
         }
         getModuleFilesPath.path = path.resolve(bpath, mpath);
     }
@@ -39,17 +40,18 @@ function findInModulePackage(bpath, mpath, p) {
 
     try {
         // 读取成功 p = require modle file path
-        utils.log("检查bower directory中是否存在以下模块", p);
+        gutil.log(gutil.colors.yellow("检查(check)bower directory中模块: "), p);
         p = utils.readjson(jsonpath).main;
-        utils.log("找到模块主文件", p);
     } catch (error) {
+        gutil.log(gutil.colors.red('[gulp-fecmd error]'));
         console.log(error.message);
         return false;
     }
     if(fs.existsSync(path.join(rmfp, p))){
         // TODO: 返回相对路径 相对build path
-        
-        return path.join(rmfp, p);
+        p = path.join(rmfp, p);
+        gutil.log(gutil.colors.green("找到模块主文件: "), p);
+        return p;
     }
     return false;
 }
@@ -119,7 +121,7 @@ function exportReqI(config) {
             if (!modules[id]) {
                 // 处理循环引用
                 modules[id] = flag;
-                utils.log("dependence(处理依赖): ", p);
+                gutil.log(gutil.colors.cyan("dependence(处理依赖): "), p);
                 requireIterator(buildPath, p, modules, moduleListObj);
             }
             
