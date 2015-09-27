@@ -18,7 +18,7 @@ function gulpFECMD(opt) {
     };
 
     opt = !opt ? (utils.log("use default config : ", dft), dft) :
-                                    utils.extend(dft, opt, true);
+                                    utils.extend(true, dft, opt);
                                     
     requireIterator = requireItor(opt);
 

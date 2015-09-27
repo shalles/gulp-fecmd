@@ -97,9 +97,12 @@ function extend(){
             }
         }
     }
-    var re, len = arguments.length, deep, i;
-    deep = arguments[len-1] === true ? (len--, true): false;
-    arguments[0] === true ? (i = 2, re = arguments[1]): (i = 0, re = {});
+
+    var re, len = arguments.length, deep, i = 0;
+
+    deep = arguments[i] === true ? (i++, true): false;
+    re   = arguments[i++];
+
     for(i; i < len; i++){
         classof(arguments[i]) === 'Object' && copy(re, arguments[i], deep);
     }
