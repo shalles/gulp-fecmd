@@ -1,6 +1,6 @@
 
 // file "{{ path }}" to module[{{ id }}]
-window.["{{id}}"] = (function(exports, module, window, undefined) {
+window["{{id}}"] = (function(exports, module, window, undefined) {
     
     {{ code }}
 
