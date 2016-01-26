@@ -57,7 +57,8 @@ function findInModulePackage(bpath, mpath, p) {
 }
 
 function exportReqI(config) {
-    var modulesPath = config.modulesPath,
+    var exportType = config.type || 'require',
+        modulesPath = config.modulesPath,
         commonPath = config.commPath; 
 
     function requireIterator(buildPath, filepath, modules, moduleListObj) {
@@ -122,7 +123,7 @@ function exportReqI(config) {
             
             p = utils.toBasePath(p, buildPath);
 
-            return 'require("' + p + '")';
+            return exportType === 'require' ? 'require("' + p + '")' : 'window["' + id + '"]';
         });
 
         //导出前的处理

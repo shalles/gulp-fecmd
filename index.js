@@ -10,9 +10,11 @@ var PLUGIN_NAME = 'gulp-fecmd',
     codetpl = fs.readFileSync(__dirname + '/src/tpl/code.tpl').toString(),
     inittpl = fs.readFileSync(__dirname + '/src/tpl/init.tpl').toString();
     basetpl = fs.readFileSync(__dirname + '/src/tpl/base.tpl').toString();
+    clostpl = fs.readFileSync(__dirname + '/src/tpl/closure.tpl').toString();
 
 function gulpFECMD(opt) {
     var dft = {
+        type: 'require',
         modulesPath: "",
         commPath: ""
     };
@@ -49,16 +51,19 @@ function gulpFECMD(opt) {
             moduleListObj = requireIterator(buildPath, filepath, modules, moduleListObj);
             
             // 用函数实现cmd的处理  this is the core of fecmd
-            contents = utils.simpleTemplate(codetpl, moduleListObj.gen);
-            
-
-            // 合并文件 merge temolate
-            var mainpath = utils.toBasePath(filepath, buildPath);
-            
-            contents = utils.simpleTemplate(basetpl, {
-                "modules": contents,
-                "init": utils.simpleTemplate(inittpl, mainpath)
-            });
+            if(opt.type === 'require'){
+                contents = utils.simpleTemplate(codetpl, moduleListObj.gen);
+                
+                // 合并文件 merge template
+                var mainpath = utils.toBasePath(filepath, buildPath);
+                
+                contents = utils.simpleTemplate(basetpl, {
+                    "modules": contents,
+                    "init": utils.simpleTemplate(inittpl, mainpath)
+                });
+            } else if(opt.type === 'window'){
+                contents = utils.simpleTemplate(clostpl, moduleListObj.gen);
+            }
             
             file.contents = new Buffer(contents);
         }
