@@ -70,7 +70,7 @@ function exportReqI(config) {
             regx = /require\(['"](.+)['"]\)/g,
             match;
 
-        content = content.toString();
+        content = content.toString('utf8');
 
         match = utils.clearJs(content).match(regx);
 
@@ -123,7 +123,7 @@ function exportReqI(config) {
             
             p = utils.toBasePath(p, buildPath);
 
-            return exportType === 'require' ? 'require("' + p + '")' : 'window["' + id + '"]';
+            return exportType === 'require' ? 'require("' + p + '")' : 'window.__MODULES["' + id + '"]';
         });
 
         //导出前的处理

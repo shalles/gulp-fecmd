@@ -7,10 +7,11 @@ var fs = require('fs'),
     plugin = require('./src/plugin');
 
 var PLUGIN_NAME = 'gulp-fecmd',
-    codetpl = fs.readFileSync(__dirname + '/src/tpl/code.tpl').toString(),
-    inittpl = fs.readFileSync(__dirname + '/src/tpl/init.tpl').toString();
-    basetpl = fs.readFileSync(__dirname + '/src/tpl/base.tpl').toString();
-    clostpl = fs.readFileSync(__dirname + '/src/tpl/closure.tpl').toString();
+    codetpl = fs.readFileSync(__dirname + '/src/tpl/code.tpl').toString('utf8'),
+    inittpl = fs.readFileSync(__dirname + '/src/tpl/init.tpl').toString('utf8'),
+    basetpl = fs.readFileSync(__dirname + '/src/tpl/base.tpl').toString('utf8'),
+    clostpl = fs.readFileSync(__dirname + '/src/tpl/closure.tpl').toString('utf8'),
+    winbtpl = fs.readFileSync(__dirname + '/src/tpl/win-base.tpl').toString('utf8');
 
 function gulpFECMD(opt) {
     var dft = {
@@ -63,11 +64,11 @@ function gulpFECMD(opt) {
                     "init": utils.simpleTemplate(inittpl, mainpath)
                 });
             } else if(opt.type === 'window'){
-                contents = 'window.__MODULES = window.__MODULES || {};\n';
-                contents += utils.simpleTemplate(clostpl, moduleListObj.gen);
+                contents = utils.simpleTemplate(clostpl, moduleListObj.gen);
+                contents = utils.simpleTemplate(winbtpl, contents);
             }
             
-            file.contents = new Buffer(contents);
+            file.contents = new Buffer(contents.toString('utf8'));
         }
         
         this.push(file);
@@ -82,8 +83,8 @@ function gulpFECMD(opt) {
                     "init": ""
                 });
             } else if(opt.type === 'window'){
-                contents = 'window.__MODULES = window.__MODULES || {};\n';
-                contents += utils.simpleTemplate(clostpl, commonModulesList);
+                contents = utils.simpleTemplate(clostpl, commonModulesList);
+                contents = utils.simpleTemplate(winbtpl, contents);
             }
 
             var commFile = new gutils.File({
