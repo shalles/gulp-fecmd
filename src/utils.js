@@ -109,10 +109,17 @@ function extend(){
     return re;
 }
 
+function clearJs(str){
+    var reg = /("([^\\\"]*(\\.)?)*")|('([^\\\']*(\\.)?)*')|(\/{2,}.*?(\r|\n))|(\/\*(\n|.)*?\*\/)/g;
+    return str.replace(reg, function(word) {
+        return /^\/{2,}/.test(word) || /^\/\*/.test(word) ? "" : word;
+    });
+}
+
 function readjson(filepath){
     var json;
     try{
-        json = JSON.parse(fs.readFileSync(filepath).toString());
+        json = JSON.parse(clearJs(fs.readFileSync(filepath).toString()));
     } catch(e){
         json = {}
     }
@@ -146,6 +153,7 @@ function singleArray(arr, id){
 
 module.exports = {
     log: log,
+    clearJs: clearJs,
     simpleTemplate: simpleTemplate,
     convertID: convertID,
     flagWin: flagWin,

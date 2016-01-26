@@ -71,12 +71,7 @@ function exportReqI(config) {
 
         content = content.toString();
 
-        // var requireList = (content.replace(/\/\/.*\n/g, '\n').match(regx) || []).map(function(x){
-        //     x = x && regx.exec(x) || [];
-
-        //     console.log("x------------------: ", x, x[1]);
-        //     return x[1] || '';
-        // });
+        match = utils.clearJs(content).match(regx);
 
         // 处理检查require前的工作 为扩展语言如coffee等
         content = fireback(cbBefore, {
@@ -87,8 +82,8 @@ function exportReqI(config) {
         // 当前文件中是否有require项 这里只是简单的regex match 之后需优化排除注释里的require
         content = content.replace(regx, function($0, $1) {
             // 排除注释掉的require
-            //if(requireList.indexOf($1) === -1) return $0;
-
+            if(match.indexOf($0) === -1) return $0;
+            
             // 处理common
             var p, flag = $1.slice(-2) === '!!' ? 2 : 1;
             $1 = p = flag === 2 ? $1.slice(0, -2): $1;
