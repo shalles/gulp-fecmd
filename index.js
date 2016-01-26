@@ -63,7 +63,8 @@ function gulpFECMD(opt) {
                     "init": utils.simpleTemplate(inittpl, mainpath)
                 });
             } else if(opt.type === 'window'){
-                contents = utils.simpleTemplate(clostpl, moduleListObj.gen);
+                contents = 'window.__MODULES = window.__MODULES || {};\n';
+                contents += utils.simpleTemplate(clostpl, moduleListObj.gen);
             }
             
             file.contents = new Buffer(contents);
@@ -81,7 +82,8 @@ function gulpFECMD(opt) {
                     "init": ""
                 });
             } else if(opt.type === 'window'){
-                contents = utils.simpleTemplate(clostpl, commonModulesList);
+                contents = 'window.__MODULES = window.__MODULES || {};\n';
+                contents += utils.simpleTemplate(clostpl, commonModulesList);
             }
 
             var commFile = new gutils.File({

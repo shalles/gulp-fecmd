@@ -1,6 +1,6 @@
 {
   "name": "gulp-fecmd",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "description": "FE CMD(Common Module Definition) for gulp",
   "main": "index.js",
   "scripts": {
