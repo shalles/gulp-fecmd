@@ -9,14 +9,18 @@ var fs = require('fs'),
  *
  * 
  */
-module.exports = function(cbBefore, cbAfter, buildPath){
+module.exports = function(cbBefore, cbAfter, buildPath, retract){
     // 清空 clear callback
     cbBefore.empty();
     cbAfter.empty();
     
+    var retractStr = '\n';
+    for(var i = 0; i < retract; i++){
+        retractStr += '\t';
+    }
     //格式缩进 format require code tab
     cbAfter.add(function(args){
-        args.cnt = args.cnt.replace(/\n/g, '\n\t\t\t');
+        args.cnt = args.cnt.replace(/\n/g, retractStr);
         return;
     });
     // 处理不同ext文件 template require like require('htmlcode.tpl') export a safe string;

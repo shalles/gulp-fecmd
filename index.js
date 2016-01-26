@@ -23,7 +23,8 @@ function gulpFECMD(opt) {
                                     utils.extend(true, dft, opt);
                                     
     requireIterator = requireItor(opt);
-
+    
+    var retract = opt.type === 'window' ? 1 : 3;
     var commonModulesList = [];
 
     var stream = through.obj(function (file, enc, cb) {
@@ -45,7 +46,7 @@ function gulpFECMD(opt) {
             
             // console.log("buildPathRelative", buildPathRelative);
             // register Callback before & after require iterator searching 
-            plugin(requireItor.cbBefore, requireItor.cbAfter, buildPath);
+            plugin(requireItor.cbBefore, requireItor.cbAfter, buildPath, retract);
             
             // 深度优先遍历处理require  Depth-First searching require
             moduleListObj = requireIterator(buildPath, filepath, modules, moduleListObj);
@@ -72,12 +73,16 @@ function gulpFECMD(opt) {
 
         if(commonModulesList.length){
             commonModulesList = utils.singleArray(commonModulesList, 'id');
-            contents = utils.simpleTemplate(codetpl, commonModulesList);
+            if(opt.type === 'require'){
+                contents = utils.simpleTemplate(codetpl, commonModulesList);
 
-            contents = utils.simpleTemplate(basetpl, {
-                "modules": contents,
-                "init": ""
-            });
+                contents = utils.simpleTemplate(basetpl, {
+                    "modules": contents,
+                    "init": ""
+                });
+            } else if(opt.type === 'window'){
+                contents = utils.simpleTemplate(clostpl, commonModulesList);
+            }
 
             var commFile = new gutils.File({
                 cwd: buildPath,
