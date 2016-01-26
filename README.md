@@ -71,10 +71,8 @@ gulp.task('scripts', function() {
     // if you don't give modulePath, default is the directory in ".bowerrc" file 
     // or the folder bower_components in you build path but all the first is you 
     // scripts folder then bower module
-    data = data.pipe(fecmd()); 
+    data = data.pipe(fecmd({type: 'window'})); //export type mode default: require 
     
-
-
     config.minify && (data = data.pipe(uglify()).pipe(sourcemaps.write()));
     config.livereload && data.pipe(livereload());
     config.version ?
