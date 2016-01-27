@@ -7,11 +7,11 @@ var fs = require('fs'),
     plugin = require('./src/plugin');
 
 var PLUGIN_NAME = 'gulp-fecmd',
-    codetpl = fs.readFileSync(__dirname + '/src/tpl/code.tpl').toString('utf8'),
-    inittpl = fs.readFileSync(__dirname + '/src/tpl/init.tpl').toString('utf8'),
-    basetpl = fs.readFileSync(__dirname + '/src/tpl/base.tpl').toString('utf8'),
-    clostpl = fs.readFileSync(__dirname + '/src/tpl/closure.tpl').toString('utf8'),
-    winbtpl = fs.readFileSync(__dirname + '/src/tpl/win-base.tpl').toString('utf8');
+    codetpl = utils.loadTpl(__dirname + '/src/tpl/code.tpl'),
+    inittpl = utils.loadTpl(__dirname + '/src/tpl/init.tpl'),
+    basetpl = utils.loadTpl(__dirname + '/src/tpl/base.tpl'),
+    clostpl = utils.loadTpl(__dirname + '/src/tpl/closure.tpl'),
+    winbtpl = utils.loadTpl(__dirname + '/src/tpl/win-base.tpl');
 
 function gulpFECMD(opt) {
     var dft = {
@@ -47,7 +47,7 @@ function gulpFECMD(opt) {
             
             // console.log("buildPathRelative", buildPathRelative);
             // register Callback before & after require iterator searching 
-            plugin(requireItor.cbBefore, requireItor.cbAfter, buildPath, retract);
+            plugin(requireItor.cbBefore, requireItor.cbAfter, buildPath, opt.type, retract);
             
             // 深度优先遍历处理require  Depth-First searching require
             moduleListObj = requireIterator(buildPath, filepath, modules, moduleListObj);

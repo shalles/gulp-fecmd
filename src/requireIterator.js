@@ -123,7 +123,8 @@ function exportReqI(config) {
             
             p = utils.toBasePath(p, buildPath);
 
-            return exportType === 'require' ? 'require("' + p + '")' : 'window.__MODULES["' + id + '"]';
+            return exportType === 'require' ? 'require("' + p + '")' : 
+                    'window.__MODULES["' + id + '"]' + (utils.inArray(path.extname(p), ['.tpl']) ? '()': '');
         });
 
         //导出前的处理

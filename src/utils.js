@@ -151,9 +151,19 @@ function singleArray(arr, id){
     return arr;
 }
 
+function inArray(ele, array){
+    return array.indexOf(ele) !== -1;
+}
+
+function loadTpl(filepath){
+    return fs.readFileSync(filepath).toString('utf8');
+}
+
 module.exports = {
     log: log,
     clearJs: clearJs,
+    inArray: inArray,
+    loadTpl: loadTpl,
     simpleTemplate: simpleTemplate,
     convertID: convertID,
     flagWin: flagWin,

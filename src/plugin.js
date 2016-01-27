@@ -1,6 +1,8 @@
 var fs = require('fs'),
     path = require('path'),
+    utils = require('./utils.js');
     babel = require('babel-core');
+
 
 /*
  * callback(parmas)
@@ -9,10 +11,13 @@ var fs = require('fs'),
  *
  * 
  */
-module.exports = function(cbBefore, cbAfter, buildPath, retract){
+module.exports = function(cbBefore, cbAfter, buildPath, exportType, retract){
     // 清空 clear callback
     cbBefore.empty();
     cbAfter.empty();
+
+    var exportTpl = utils.loadTpl(__dirname + '/tpl/' + 
+            (exportType === 'window' ? 'exp-func' : 'export') + '.tpl');
     
     var retractStr = '\n';
     for(var i = 0; i < retract; i++){
@@ -27,21 +32,12 @@ module.exports = function(cbBefore, cbAfter, buildPath, retract){
     cbBefore.add(function(args){
         switch(path.extname(args.fp)){
             case '.tpl': 
-                args.cnt = "module.exports=" + JSON.stringify(args.cnt);
+                args.cnt = utils.simpleTemplate(exportTpl, JSON.stringify(args.cnt));
                 break;
             case '.json':
-                args.cnt = "module.exports=" + args.cnt; //解析出错直接暴露
+                args.cnt = utils.simpleTemplate(exportTpl, args.cnt); //解析出错直接暴露
                 break;
             case '.es6':
-                // var result = traceur.compile(args.cnt, {
-                //     sourceMap: false,
-                //     // 其他设置
-                //     modules: 'commonjs'
-                // });
-                // if(result.error) throw result.error;
-                // console.log(result)
-                // args.cnt = result;
-
                 args.cnt = babel.transform(args.cnt, {
                     modules: "common" 
                 }).code;
