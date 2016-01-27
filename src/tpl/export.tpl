@@ -1,1 +1,1 @@
-module.export = {{ content }}
+module.exports = {{ content }};
