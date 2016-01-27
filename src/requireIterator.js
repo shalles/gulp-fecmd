@@ -124,7 +124,7 @@ function exportReqI(config) {
             p = utils.toBasePath(p, buildPath);
 
             return exportType === 'require' ? 'require("' + p + '")' : 
-                    'window.__MODULES["' + id + '"]' + (utils.inArray(path.extname(p), ['.tpl']) ? '()': '');
+                    'window.__MODULES["' + id + '"]' + (utils.inArray(path.extname(p), ['.tpl', '.json']) ? '()': '');
         });
 
         //导出前的处理
