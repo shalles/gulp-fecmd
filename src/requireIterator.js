@@ -80,53 +80,55 @@ function exportReqI(config) {
             fp: filepath
         }).cnt;
 
-        // 当前文件中是否有require项 这里只是简单的regex match 之后需优化排除注释里的require
-        content = content.replace(regx, function($0, $1) {
-            // 排除注释掉的require
-            if(match.indexOf($0) === -1) return $0;
-            
-            // 处理common
-            var p, flag = $1.slice(-2) === '!!' ? 2 : 1;
-            $1 = p = flag === 2 ? $1.slice(0, -2): $1;
+        if(match){
+            // 当前文件中是否有require项 这里只是简单的regex match 之后需优化排除注释里的require
+            content = content.replace(regx, function($0, $1) {
+                // 排除注释掉的require
+                if(match.indexOf($0) === -1) return $0;
+                
+                // 处理common
+                var p, flag = $1.slice(-2) === '!!' ? 2 : 1;
+                $1 = p = flag === 2 ? $1.slice(0, -2): $1;
 
-            // console.log("flag:------------", $1, "----", flag);
-            // 处理绝对路径的情况
-            p = path.isAbsolute(p) ? p : path.join(filebase, p);
-            // TODO: 触发
-            //var wp = path.join(buildPath, p);
-            var wp = p.indexOf(buildPath) === 0 ? p : path.join(buildPath, p);
-            if (!fs.existsSync(wp)) {
-                // 默认ext是.js
-                if (fs.existsSync(wp + '.js')) {
-                    p += '.js';
-                } else {
+                // console.log("flag:------------", $1, "----", flag);
+                // 处理绝对路径的情况
+                p = path.isAbsolute(p) ? p : path.join(filebase, p);
+                // TODO: 触发
+                //var wp = path.join(buildPath, p);
+                var wp = p.indexOf(buildPath) === 0 ? p : path.join(buildPath, p);
+                if (!fs.existsSync(wp)) {
+                    // 默认ext是.js
+                    if (fs.existsSync(wp + '.js')) {
+                        p += '.js';
+                    } else {
 
-                    p = modules[$1] || findInModulePackage(buildPath, modulesPath, $1);
-                    p = utils.toBasePath(p, buildPath)
-                    if (!p) {
-                        // 模块库里面也没有
-                        throw Error("error: can not find file(找不到文件) " + wp);
-                    }else{
-                        modules[$1] = p;
+                        p = modules[$1] || findInModulePackage(buildPath, modulesPath, $1);
+                        p = utils.toBasePath(p, buildPath)
+                        if (!p) {
+                            // 模块库里面也没有
+                            throw Error("error: can not find file(找不到文件) " + wp);
+                        }else{
+                            modules[$1] = p;
+                        }
                     }
                 }
-            }
 
-            var id = utils.convertID(p);
+                var id = utils.convertID(p);
 
-            if (!modules[id]) {
-                // 处理循环引用
-                modules[id] = flag;
-                gutil.log(gutil.colors.cyan("dependence(处理依赖): "), p);
-                requireIterator(buildPath, p, modules, moduleListObj);
-            }
-            
-            p = utils.toBasePath(p, buildPath);
+                if (!modules[id]) {
+                    // 处理循环引用
+                    modules[id] = flag;
+                    gutil.log(gutil.colors.cyan("dependence(处理依赖): "), p);
+                    requireIterator(buildPath, p, modules, moduleListObj);
+                }
+                
+                p = utils.toBasePath(p, buildPath);
 
-            return exportType === 'require' ? 'require("' + p + '")' : 
-                    'window.__MODULES["' + id + '"]' + (utils.inArray(path.extname(p), ['.tpl', '.json']) ? '()': '');
-        });
-
+                return exportType === 'require' ? 'require("' + p + '")' : 
+                        'window.__MODULES["' + id + '"]' + (utils.inArray(path.extname(p), ['.tpl', '.json']) ? '()': '');
+            });
+        }
+        
         //导出前的处理
         content = fireback(cbAfter, {
             cnt: content,
