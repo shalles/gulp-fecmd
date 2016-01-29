@@ -1,8 +1,9 @@
 // file "{{ path }}" to window["{{ id }}"]
-(function(exports, module, window, undefined) {
-    
+(function(module, window, undefined) {
+    exports = module.exports = {};
+
     {{ code }}
 
-    window.__MODULES["{{id}}"] = module.exports || exports;
-})({}, {}, window);
+    window.__MODULES["{{id}}"] = module.exports;
+})({}, window);
 
