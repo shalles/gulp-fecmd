@@ -45,6 +45,7 @@ function gulpFECMD(opt) {
             buildPathRelative = file.base.slice(buildPath.length);
             filepath = file.sourceMap ? 
                 path.join(file.base, file.sourceMap.file) : file.history[0];
+            filepath = filepath.slice(buildPath.length);
             
             // console.log("buildPathRelative", buildPathRelative);
             // register Callback before & after require iterator searching 
