@@ -43,8 +43,8 @@ function gulpFECMD(opt) {
             moduleListObj = {comm: commonModulesList, gen: []};
             buildPath = file.cwd;
             buildPathRelative = file.base.slice(buildPath.length);
-            filepath = path.join(file.base, file.sourceMap.file);
-            // filepath = path.join(buildPathRelative, path.basename(file.history));
+            filepath = file.sourceMap ? 
+                path.join(file.base, file.sourceMap.file) : file.history[0];
             
             // console.log("buildPathRelative", buildPathRelative);
             // register Callback before & after require iterator searching 
