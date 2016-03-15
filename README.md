@@ -77,7 +77,7 @@ gulp.task('scripts', function() {
     data = data.pipe(fecmd({
         type: 'window',//export type mode default: require
         alias: {
-            js_lib: 'src/lib'
+            js_lib: __dirname + 'src/lib'
         }
     }));  
     
