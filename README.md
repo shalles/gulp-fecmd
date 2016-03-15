@@ -11,6 +11,9 @@ npm install gulp-fecmd
 
 ### new version
 
+**`version`** 1.1.24 <br>
+support alias
+
 **`version`** 1.1.0 <br>
 support common file
 
@@ -71,7 +74,12 @@ gulp.task('scripts', function() {
     // if you don't give modulePath, default is the directory in ".bowerrc" file 
     // or the folder bower_components in you build path but all the first is you 
     // scripts folder then bower module
-    data = data.pipe(fecmd({type: 'window'})); //export type mode default: require 
+    data = data.pipe(fecmd({
+        type: 'window',//export type mode default: require
+        alias: {
+            js_lib: 'src/lib'
+        }
+    }));  
     
     config.minify && (data = data.pipe(uglify()).pipe(sourcemaps.write()));
     config.livereload && data.pipe(livereload());

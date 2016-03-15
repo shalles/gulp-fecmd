@@ -30,28 +30,28 @@ function getModuleFilesPath(bpath, mpath){
 
     return getModuleFilesPath.path;
 }
-function findInModulePackage(bpath, mpath, p) {
+function findInModulePackage(bpath, mpath, reqPath) {
 
-    mpath = (mpath && fs.existsSync(path.resolve(bpath, mpath, p))) ? 
+    mpath = (mpath && fs.existsSync(path.resolve(bpath, mpath, reqPath))) ? 
                             mpath : getModuleFilesPath(bpath, mpath);
 
-    var rmfp = path.resolve(mpath, p),
+    var rmfp = path.resolve(mpath, reqPath),
         jsonpath = path.join(rmfp, 'bower.json'); // 模块中的bower.json
 
     try {
-        // 读取成功 p = require modle file path
-        gutil.log(gutil.colors.yellow("检查(check)bower directory中模块: "), p);
-        p = utils.readjson(jsonpath).main;
+        // 读取成功 reqPath = require modle file path
+        gutil.log(gutil.colors.yellow("检查(check)bower directory中模块: "), reqPath);
+        reqPath = utils.readjson(jsonpath).main;
     } catch (error) {
-        gutil.log(gutil.colors.red('[gulp-fecmd error]'));
-        console.log(error.message);
+        // gutil.log(gutil.colors.red('[gulp-fecmd error]'));
+        console.log(gutil.colors.red('[gulp-fecmd error]'), error.message);
         return false;
     }
-    if(fs.existsSync(path.join(rmfp, p))){
+    if(fs.existsSync(path.join(rmfp, reqPath))){
         // TODO: 返回相对路径 相对build path
-        p = path.join(rmfp, p);
-        gutil.log(gutil.colors.green("找到模块主文件: "), p);
-        return p;
+        reqPath = path.join(rmfp, reqPath);
+        gutil.log(gutil.colors.green("找到模块主文件: "), reqPath);
+        return reqPath;
     }
     return false;
 }
@@ -59,7 +59,8 @@ function findInModulePackage(bpath, mpath, p) {
 function exportReqI(config) {
     var exportType = config.type || 'require',
         modulesPath = config.modulesPath,
-        commonPath = config.commPath; 
+        commonPath = config.commPath,
+        aliasObj = config.alias; 
 
     function requireIterator(buildPath, filepath, modules, moduleListObj) {
 
@@ -82,51 +83,65 @@ function exportReqI(config) {
 
         if(match){
             // 当前文件中是否有require项 这里只是简单的regex match 之后需优化排除注释里的require
-            content = content.replace(regx, function($0, $1) {
+            var replaceHandle = function($0, $1) {
                 // 排除注释掉的require
                 if(match.indexOf($0) === -1) return $0;
                 
+                // console.log('$1: ', $1);
                 // 处理common
-                var p, flag = $1.slice(-2) === '!!' ? 2 : 1;
-                $1 = p = flag === 2 ? $1.slice(0, -2): $1;
+                var reqPath, flag = $1.slice(-2) === '!!' ? 2 : 1;
+                $1 = reqPath = flag === 2 ? $1.slice(0, -2): $1;
 
                 // console.log("flag:------------", $1, "----", flag);
                 // 处理绝对路径的情况
-                p = path.isAbsolute(p) ? p : path.join(filebase, p);
+                reqPath = path.isAbsolute(reqPath) ? reqPath : path.join(filebase, reqPath);
                 // TODO: 触发
-                //var wp = path.join(buildPath, p);
-                var wp = p.indexOf(buildPath) === 0 ? p : path.join(buildPath, p);
-                if (!fs.existsSync(wp)) {
+                //var absReqPath = path.join(buildPath, reqPath);
+                var absReqPath = reqPath.indexOf(buildPath) === 0 ? reqPath : path.join(buildPath, reqPath);
+                if (!fs.existsSync(absReqPath)) {
                     // 默认ext是.js
-                    if (fs.existsSync(wp + '.js')) {
-                        p += '.js';
+                    if (fs.existsSync(absReqPath + '.js')) {
+                        reqPath += '.js';
                     } else {
-
-                        p = modules[$1] || findInModulePackage(buildPath, modulesPath, $1);
-                        p = utils.toBasePath(p, buildPath)
-                        if (!p) {
-                            // 模块库里面也没有
-                            throw Error("error: can not find file(找不到文件) " + wp);
+                        // console.log('come in')
+                        // 没有找到文件在检查是否有别名
+                        for(var i in aliasObj){
+                            var alias = i + '/';
+                            // console.log('alias:', alias)
+                            if($1.indexOf(alias) > -1){
+                                var name = aliasObj[i] + '/';
+                                // console.log('name:', name);
+                                return replaceHandle($0, $1.replace(alias, name));
+                            }
+                        }
+                        // 检查是否在module中
+                        reqPath = modules[$1] || findInModulePackage(buildPath, modulesPath, $1);
+                        // 模块库里面也没有
+                        if (!reqPath) {
+                            throw Error("error: can not find file(找不到文件) " + absReqPath);
                         }else{
-                            modules[$1] = p;
+                            reqPath = utils.toBasePath(reqPath, buildPath)
+                            modules[$1] = reqPath;
                         }
                     }
                 }
 
-                var id = utils.convertID(p);
+                var id = utils.convertID(reqPath);
 
                 if (!modules[id]) {
                     // 处理循环引用
                     modules[id] = flag;
-                    gutil.log(gutil.colors.cyan("dependence(处理依赖): "), p);
-                    requireIterator(buildPath, p, modules, moduleListObj);
+                    gutil.log(gutil.colors.cyan("dependence(处理依赖): "), reqPath);
+                    requireIterator(buildPath, reqPath, modules, moduleListObj);
                 }
                 
-                p = utils.toBasePath(p, buildPath);
+                reqPath = utils.toBasePath(reqPath, buildPath);
 
-                return exportType === 'require' ? 'require("' + p + '")' : 
-                        'window.__MODULES["' + id + '"]' + (utils.inArray(path.extname(p), ['.tpl', '.json']) ? '()': '');
-            });
+                return exportType === 'require' ? 'require("' + reqPath + '")' : 
+                        'window.__MODULES["' + id + '"]' + (utils.inArray(path.extname(reqPath), ['.tpl', '.json']) ? '()': '');
+            }
+
+            content = content.replace(regx, replaceHandle);
         }
         
         //导出前的处理

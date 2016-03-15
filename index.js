@@ -17,7 +17,8 @@ function gulpFECMD(opt) {
     var dft = {
         type: 'require',
         modulesPath: "",
-        commPath: ""
+        commPath: "",
+        alias: {}
     };
 
     opt = !opt ? (utils.log("use default config : ", dft), dft) :
